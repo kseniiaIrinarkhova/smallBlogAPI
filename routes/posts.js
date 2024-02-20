@@ -1,10 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const posts = require("../data/posts");
+const error = require("../utilities/error");
 
 router.route('/')
-    .get((req, res) => {
-        res.json(posts);
+    .get((req, res, next) => {
+        console.log(req.query)
+        let userId = req.query["userId"];
+        if (userId){
+            const links = [
+                {
+                    href: `?userId=${userId}`,
+                    rel: "",
+                    type: "GET",
+                }]
+            let userPosts = posts.filter((p) =>  p.userId == userId );
+            if(userPosts.length > 0) res.json({userPosts, links})
+            else next(error(400, `User with ID='${userId}' does not have any posts`));
+        }
+        else res.json(posts);
     })
     .post((req, res, next) => {
         if (req.body.userId && req.body.title && req.body.content) {
