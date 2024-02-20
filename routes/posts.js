@@ -85,11 +85,12 @@ router.route('/:id')
 router.route("/:id/comments")
     .get((req,res,next)=>{
         const post = posts.find((p) => p.id == req.params.id);
-
+        let userId = req.query["userId"];
         if (post) {
-            const postComments = comments.filter((c) => c.postId == post.id);
-            post.comments = postComments
-            res.json(post);
+            let postComments
+            if(userId) postComments = comments.filter((c) => c.postId == post.id && c.userId == userId);
+            else postComments = comments.filter((c) => c.postId == post.id);
+            res.json(postComments);
         }
         else next();
     });
