@@ -3,6 +3,7 @@ const router = express.Router();
 
 const users = require("../data/users");
 const posts = require("../data/posts");
+const comments = require("../data/comments");
 const error = require("../utilities/error");
 
 router
@@ -82,7 +83,7 @@ router
         if (user) res.json(user);
         else next();
     });
-    
+
 //Retrieves all posts by a user with the specified id.
 router.route('/:id/posts')
 .get((req,res,next)=>{
@@ -98,10 +99,22 @@ router.route('/:id/posts')
     if (user) 
     {
         const userPosts = posts.filter((p)=> p.userId == user.id);
-        user.posts = userPosts
-        res.json({user, links });
+        res.json({ userPosts, links });
     }
     else next();
 })
+
+router.route('/:id/comments')
+    .get((req, res, next) => {
+        const user = users.find((u) => u.id == req.params.id);
+        let postId = req.query["postId"];
+        if (user) {
+            let userComments;
+            if (postId) userComments = comments.filter((c) => c.userId == user.id && c.postId == postId)
+            else userComments = comments.filter((c) => c.userId == user.id);
+            res.json(userComments);
+        }
+        else next();
+    })
 
 module.exports = router;
