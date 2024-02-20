@@ -52,13 +52,14 @@ app.use("/api", function (req, res, next) {
     next();
 });
 
-//Routs
+//Routes
 app.get("/", (req, res) => {
     res.send("Work in progress!");
 });
 
-app.use('/api/users', require('./routes/users.js'))
-app.use('/api/posts', require('./routes/posts.js'))
+app.use('/api/users', require('./routes/users.js'));
+app.use('/api/posts', require('./routes/posts.js'));
+app.use('/api/comments', require('./routes/comments.js'));
 
 // Custom 404 (not found) middleware.
 // Since we place this last, it will only process
