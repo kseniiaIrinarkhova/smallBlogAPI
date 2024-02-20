@@ -6,8 +6,25 @@ const error = require("../utilities/error");
 router
     .route("/")
     .get((req, res) => {
+        let userId = req.query["userId"];
+        let postId = req.query["postId"];
+        if(userId){
+            console.log(`All comments for ${userId} user`)
+            let userComments = comments.filter((c) => c.userId == userId);
+            if (userComments.length > 0) res.json(userComments)
+            else next(error(400, `User with ID='${userId}' does not have any comments`));
+        }
+        else if(postId)
+        {
+            console.log(`All comments for ${postId} post`)
+            let userComments = comments.filter((c) => c.postId == postId);
+            if (userComments.length > 0) res.json(userComments)
+            else next(error(400, `There is no comments for post with ID = ${postId}`));
+        }
+        else{
         console.log('All comments')
         res.json({ comments});
+        }
     })
     .post((req, res, next) => {
         if (req.body.postId && req.body.userId && req.body.body) {

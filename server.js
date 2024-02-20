@@ -14,7 +14,7 @@ app.use(bodyParser.json({ extended: true }));
 
 //Middleware
 
-// Logging Middlewaare
+// Logging Middleware
 app.use((req, res, next) => {
     const time = new Date();
 
