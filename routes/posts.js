@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const posts = require("../data/posts");
+const comments = require("../data/comments");
 const error = require("../utilities/error");
 
 router.route('/')
@@ -78,6 +79,18 @@ router.route('/:id')
         });
 
         if (post) res.json(post);
+        else next();
+    });
+
+router.route("/:id/comments")
+    .get((req,res,next)=>{
+        const post = posts.find((p) => p.id == req.params.id);
+
+        if (post) {
+            const postComments = comments.filter((c) => c.postId == post.id);
+            post.comments = postComments
+            res.json(post);
+        }
         else next();
     });
 
