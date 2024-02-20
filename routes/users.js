@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const users = require("../data/users");
+const posts = require("../data/posts");
 const error = require("../utilities/error");
 
 router
@@ -15,7 +16,7 @@ router
                 type: "GET",
             },
         ];
-console.log(links)
+        console.log(links)
         res.json({ users, links });
     })
     .post((req, res, next) => {
@@ -81,5 +82,26 @@ router
         if (user) res.json(user);
         else next();
     });
+    
+//Retrieves all posts by a user with the specified id.
+router.route('/:id/posts')
+.get((req,res,next)=>{
+    const user = users.find((u) => u.id == req.params.id);
+    const links = [
+        {
+            href: `/${req.params.id}/posts`,
+            rel: "",
+            type: "GET",
+        }
+    ];
+
+    if (user) 
+    {
+        const userPosts = posts.filter((p)=> p.userId == user.id);
+        user.posts = userPosts
+        res.json({user, links });
+    }
+    else next();
+})
 
 module.exports = router;

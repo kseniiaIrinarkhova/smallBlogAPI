@@ -30,15 +30,35 @@ ${time.toLocaleTimeString()}: Received a ${req.method} request to ${req.url}.`
     next();
 });
 
+// Valid API Keys.
+apiKeys = ["perscholas", "ps-example", "hJAsknw-L198sAJD-l3kasx"];
 
+// New middleware to check for API keys!
+// Note that if the key is not verified,
+// we do not call next(); this is the end.
+// This is why we attached the /api/ prefix
+// to our routing at the beginning!
+app.use("/api", function (req, res, next) {
+    var key = req.query["api-key"];
+
+    // Check for the absence of a key.
+    if (!key) next(error(400, "API Key Required"));
+
+    // Check for key validity.
+    if (apiKeys.indexOf(key) === -1) next(error(401, "Invalid API Key"));
+
+    // Valid key! Store it in req.key for route access.
+    req.key = key;
+    next();
+});
 
 //Routs
 app.get("/", (req, res) => {
     res.send("Work in progress!");
 });
 
-app.use('/users', require('./routes/users.js'))
-app.use('/posts', require('./routes/posts.js'))
+app.use('/api/users', require('./routes/users.js'))
+app.use('/api/posts', require('./routes/posts.js'))
 
 // Custom 404 (not found) middleware.
 // Since we place this last, it will only process
